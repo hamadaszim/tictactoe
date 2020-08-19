@@ -1,7 +1,5 @@
 import javax.swing.*;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 public class tictac {
     private char currentPlayerMark;
@@ -12,11 +10,6 @@ public class tictac {
         currentPlayerMark = 'x';
         initializeBoard();
     }
-
-    public char[][] getBoard() {
-        return board;
-    }
-
     public char getCurrentPlayerMark()
     {
         return currentPlayerMark;
@@ -30,18 +23,7 @@ public class tictac {
             }
         }
     }
-    public void printBoard() {
-        System.out.println("-------------"); //fancy
 
-        for (int i = 0; i < 3; i++) {
-            System.out.print("| ");
-            for (int j = 0; j < 3; j++) {
-                System.out.print(board[i][j] + " | ");
-            }
-            System.out.println();
-            System.out.println("-------------");
-        }
-    }
     public boolean checkForWin(){
         return(checkRowsForWin() || checkColumnsForWin() || checkDiagonalsForWin());
     }
@@ -121,8 +103,6 @@ public class tictac {
         return((checkRowCol(board[0][0], board[1][1], board[2][2] ) || (checkRowCol(board[0][2], board[1][1], board[2][0]))));
     }
 
-
-
     private boolean checkRowCol(char a, char b, char c){
         return(( a != '-') && (b==a) && (c==b) );
     }
@@ -165,8 +145,7 @@ public class tictac {
                 position++;
             }
         }
-        int[] empty = new int[0];
-        return empty;
+        return new int[0];
     }
 
 

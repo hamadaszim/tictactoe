@@ -12,6 +12,9 @@ public class main {
     static JFrame frame = new JFrame("Tic-tac-toe!");
     static JPanel panel = new JPanel();
     static HashMap<Integer, JButton> buttonMap = new HashMap<>();
+    static boolean WAIT = false;
+    static int LOSS = 0;
+    static int TIE = 0;
     public static void main(String[] args) {
         frame.setVisible(true);
         panel.setVisible(true);
@@ -32,58 +35,55 @@ public class main {
                 button.addActionListener(
                         new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                buttonClicked(button);
-                            }
-                            ;
-
-
+                                buttonClicked(button); }
                         });
-
             }
-            frame.add(panel);
-            frame.setSize(400,400);
-            frame.setVisible(true);
-
         }
+        frame.add(panel);
+        frame.setSize(400,400);
+        frame.setVisible(true);
     }
-    public static void buttonClicked(JButton button){
-        if(!game.checkForWin() && !game.isBoardFull()) {
-            boolean next = game.buttonClicked(button);
-            if (next || !game.checkForWin() || !game.isGameTied()) {
-                game.changePlayer();
 
+    public static void buttonClicked(JButton button){
+        if(!game.isGameOVer()) {
+            boolean next = game.buttonClicked(button);
+            WAIT = false;
+            continueCheck();
+            if (next && !WAIT) {
+                game.changePlayer();
                 int position = enemy.choose(game);
                 int[] moveAI = game.convertSpaceToRowCol(position);
                 if (!game.isGameOVer()) {
                     game.placeMark(moveAI[0], moveAI[1]);
                     buttonMap.get(position).setText(String.valueOf(game.getCurrentPlayerMark()));
-                    if(game.checkForWin()){
-                        String currentPlayer = String.valueOf(game.getCurrentPlayerMark());
-                        JOptionPane.showMessageDialog(null,currentPlayer +  " Wins!");
-                    }
+                     continueCheck();
                     game.changePlayer();
-
                 }
             }
-            else if(game.isBoardFull() && !game.checkForWin()){
-                JOptionPane.showMessageDialog(null,"The game was a tie!");
-            }
-            else{
-                String currentPlayer = String.valueOf(game.getCurrentPlayerMark());
-                JOptionPane.showMessageDialog(null,currentPlayer +  " Wins!");
-
-            }
-
-
+            continueCheck();
         }
-        else if(game.isBoardFull() && !game.checkForWin()){
-            JOptionPane.showMessageDialog(null,"The game was a tie!");
+        continueCheck();
+    }
+
+    public static void continueCheck(){
+        if(game.isGameTied()){
+            TIE++;
+            JOptionPane.showMessageDialog(null,"The game was a tie! You have tied " + TIE + " times so far!");
+            WAIT=true;
+            GameOver(0);
         }
-        else{
+        if(game.checkForWin()){
+            LOSS++;
             String currentPlayer = String.valueOf(game.getCurrentPlayerMark());
-            JOptionPane.showMessageDialog(null,currentPlayer +  " Wins!");
-
+            JOptionPane.showMessageDialog(null,currentPlayer +  " Wins! You have lost " + LOSS + " times so far!");
+            GameOver(1);
         }
+    }
 
+    public static void GameOver(int type){
+        game.initializeBoard();
+        for(int i = 0; i < buttonMap.size(); i++){
+            buttonMap.get(i).setText("");
+        }
     }
 }
