@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -73,6 +74,21 @@ public class tictac {
         if(row>=0 && row < 3 && col >= 0 && col < 3){
             if(board[row][col] == '-'){
                 board[row][col] = currentPlayerMark;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean buttonClicked(JButton button){
+        String position = button.getName();
+        int[] space = convertSpaceToRowCol(Integer.parseInt(position));
+        int row = space[0];
+        int col = space[1];
+        if(row>=0 && row < 3 && col >=0 && col < 3){
+            if(board[row][col] == '-'){
+                board[row][col] = currentPlayerMark;
+                button.setText(String.valueOf(currentPlayerMark));
                 return true;
             }
         }

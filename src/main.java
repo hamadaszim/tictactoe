@@ -1,48 +1,89 @@
-import java.util.Arrays;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Scanner;
 
 
 public class main {
+    static tictac game = new tictac();
+    static AI enemy = new AI();
+    static JFrame frame = new JFrame("Tic-tac-toe!");
+    static JPanel panel = new JPanel();
+    static HashMap<Integer, JButton> buttonMap = new HashMap<>();
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        tictac game = new tictac();
-        AI enemy = new AI();
+        frame.setVisible(true);
+        panel.setVisible(true);
+        panel.setLayout(new java.awt.GridLayout(3, 3));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         game.initializeBoard();
-        System.out.println("Tic-Tac-Toe!");
-        do
-        {
-            System.out.println("Current board layout:");
-            game.printBoard();
-            int row;
-            int col;
-            do
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                final JButton button = new JButton();
+                int position = game.convertRowColToSpace(i, j);
+                button.setText("");
+                button.setBackground(Color.white);
+                button.setName(String.valueOf(position));
+                buttonMap.put(position, button);
+                button.setFont(new Font("Arial", Font.PLAIN, 40));
+                button.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                panel.add(button);
+                button.addActionListener(
+                        new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                buttonClicked(button);
+                            }
+                            ;
 
-            {
 
-                System.out.println("Player " + game.getCurrentPlayerMark() + ", enter an empty row and column to place your mark!");
-                row = scan.nextInt()-1;
-                col = scan.nextInt()-1;
+                        });
+
             }
-            while (!game.placeMark(row, col));
-            game.changePlayer();
-            int[] moveAI  = game.convertSpaceToRowCol(enemy.choose(game));
-            if(!game.isGameOVer()){
-            game.placeMark(moveAI[0], moveAI[1]);
-            game.changePlayer();}
-        }
-        while(!game.checkForWin() && !game.isBoardFull());
-        if (game.isBoardFull() && !game.checkForWin())
-        {
-            System.out.println("The game was a tie!");
-        }
-        else
-        {
-            System.out.println("Current board layout:");
-            game.printBoard();
-            game.changePlayer();
-            System.out.println(Character.toUpperCase(game.getCurrentPlayerMark()) + " Wins!");
-        }
-    }
-    }
+            frame.add(panel);
+            frame.setSize(400,400);
+            frame.setVisible(true);
 
+        }
+    }
+    public static void buttonClicked(JButton button){
+        if(!game.checkForWin() && !game.isBoardFull()) {
+            boolean next = game.buttonClicked(button);
+            if (next || !game.checkForWin() || !game.isGameTied()) {
+                game.changePlayer();
+
+                int position = enemy.choose(game);
+                int[] moveAI = game.convertSpaceToRowCol(position);
+                if (!game.isGameOVer()) {
+                    game.placeMark(moveAI[0], moveAI[1]);
+                    buttonMap.get(position).setText(String.valueOf(game.getCurrentPlayerMark()));
+                    if(game.checkForWin()){
+                        String currentPlayer = String.valueOf(game.getCurrentPlayerMark());
+                        JOptionPane.showMessageDialog(null,currentPlayer +  " Wins!");
+                    }
+                    game.changePlayer();
+
+                }
+            }
+            else if(game.isBoardFull() && !game.checkForWin()){
+                JOptionPane.showMessageDialog(null,"The game was a tie!");
+            }
+            else{
+                String currentPlayer = String.valueOf(game.getCurrentPlayerMark());
+                JOptionPane.showMessageDialog(null,currentPlayer +  " Wins!");
+
+            }
+
+
+        }
+        else if(game.isBoardFull() && !game.checkForWin()){
+            JOptionPane.showMessageDialog(null,"The game was a tie!");
+        }
+        else{
+            String currentPlayer = String.valueOf(game.getCurrentPlayerMark());
+            JOptionPane.showMessageDialog(null,currentPlayer +  " Wins!");
+
+        }
+
+    }
+}
